@@ -1,6 +1,6 @@
 from ewmh import EWMH
-import main
 import config
+
 
 def test_ewmh_wrapper(name, ewmh_func):
     ewmh = EWMH()
@@ -25,11 +25,9 @@ ewmh = EWMH()
 windows = ewmh.getClientList()
 name = config.warning_headline
 win = test_ewmh_wrapper(name, ewmh.setCloseWindow)
-#ewmh.setCloseWindow(win)
-#ewmh.display.flush()
+# ewmh.setCloseWindow(win)
+# ewmh.display.flush()
 
 # ewmh.setCloseWindow(starve_windows[0])
 # ewmh.display.flush()
-#main.dontstarve_control()
-
-
+# main.dontstarve_control()
