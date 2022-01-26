@@ -8,15 +8,18 @@ from ewmh import EWMH
 
 
 def logs(*args, to_warn=False):
-    message = ''
+    message = str(datetime.datetime.now()) + ' at '
     for s in args:
         message += str(s)
-    message += 'at ' + str(datetime.datetime.now())
     if config.debug:
         print(message)
     if to_warn:
-        print(message)  # Plug, in a future version it should send the message via e-mail or telegram
-    with open('./log') as f:
+        # TODO: Stab, in a future version it should send the message via e-mail or telegram bot
+        # Заглушка, в следующих версиях должна отправлять сообщения по почте или через телеграм бота.
+        # Следует определиться на каком языке писать комментарии.
+        print('\033[91m', message, '\033[0m')
+    with open('./log', 'w+') as f:  # Прошлая версия была без параметра 'w+', выкидывала ошибку, пытаясь открыть
+        # несуществующий файл, но эта ошибка нигде не отображалась.
         f.writelines(message)
 
 
@@ -25,22 +28,26 @@ def run(user):
     #  Запускаем steam и игру
     with sp.Popen(['sudo', '-u', user, '/usr/bin/steam', '-no-browser', 'steam://rungameid/322330'],
                   stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL) as proc:
-        time.sleep(360)  # Ожидаем загрузки 6 минут
-        logs('Ожидание загрузки игры вышло, начинаем вводить команды')
+        # Непонятное поведение, после logs('Ожидание загрузки игры вышло') скрипт ничего не делает. асинхронность? баг?ы
+        time.sleep(240)  # Ожидаем загрузку по таймеру
+        logs('Ожидание загрузки игры вышло')
         # Закрываем предупреждение, появляющееся, если используем регистронезависимые файловые системы
         close_warning()
         dontstarve_window = activate_dontstarve_window()
+        logs('Начинаем вводить команды')
         dontstarve_control(dontstarve_window)
         ewmh = EWMH()
         ewmh.setWmState(dontstarve_window, 1, '_NET_WM_STATE_SHADED')
         ewmh.display.flush()
+        logs('Ожидание')
         for i in range(config.game_time_minutes):
-            # TODO Каждую минуту проверяем запущен ли proc, не уверен что это непосредственно игра, скорее стим.
-            if proc.poll() is None:
+            # TODO Каждую минуту проверять запущена ли игра
+            if True:  # Possibly the bug in the previous commited version
                 time.sleep(60)
             else:
                 break
         stop_steam_game()
+        logs('finish run')
 
 
 def stop_steam_game():
@@ -109,8 +116,6 @@ def main():
     users = config.Users.linux_users_list
     share_xserver(users)
     stop_steam_game()
-    for user in users:
-        run(user)
     while True:
         for user in users:
             run(user)

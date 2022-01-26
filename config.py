@@ -16,4 +16,4 @@ debug = True
 loop = True
 looptime_minutes = 1450
 # game_time_minutes - time, which every user will run the game
-game_time_minutes = 7200
+game_time_minutes = 120
