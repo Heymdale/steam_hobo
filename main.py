@@ -18,38 +18,39 @@ def logs(*args, to_warn=False):
         # Заглушка, в следующих версиях должна отправлять сообщения по почте или через телеграм бота.
         # Следует определиться на каком языке писать комментарии.
         print('\033[91m', message, '\033[0m')
-    with open('./log', 'a') as f:  # Прошлая версия была без параметра 'w+', выкидывала ошибку, пытаясь открыть
-        # несуществующий файл, но эта ошибка нигде не отображалась.
+    with open('./log', 'a') as f:
         f.writelines(message)
+
 
 def find_window_of_user(current_game_windows, dontstarve_windows, concurrent_users_count):
     for el in dontstarve_windows:
-        for i in range(concurrent_users_count):
-            if not el == current_game_windows[i]:
-                dontstarve_window = el
-                current_game_windows[i] = el
-                return dontstarve_window
+        # window из класса ewmh нельзя сравнивать напрямую, пришлось сравнивать id
+        if el.id not in [x.id for x in current_game_windows]:
+            dontstarve_window = el
+            current_game_windows.append(el)
+            return dontstarve_window
 
 
 def run(user_index, concurrent_users_count, current_game_windows):
     user = config.Users.linux_users_list[user_index]
     print('Start ', user)
-    #  Запускаем steam и игру
-    with sp.Popen(['sudo', '-u', user, '/usr/bin/steam', '-no-browser', 'steam://rungameid/322330'],
-                  stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL) as proc:
-        # Непонятное поведение, после logs('Ожидание загрузки игры вышло') скрипт ничего не делает. асинхронность? баг?ы
-        time.sleep(240)  # Ожидаем загрузку по таймеру
-        logs('Ожидание загрузки игры вышло')
-        # Закрываем предупреждение, появляющееся, если используем регистронезависимые файловые системы
-        close_warning()
-        dontstarve_windows = ewmh_wrapper("Don't Starve Together", strong=True)
-        dontstarve_window = find_window_of_user(current_game_windows, dontstarve_windows, concurrent_users_count)
-        logs('Начинаем вводить команды')
-        dontstarve_control(dontstarve_window)
-        ewmh = EWMH()
-        ewmh.setWmState(dontstarve_window, 1, '_NET_WM_STATE_SHADED')
-        ewmh.display.flush()
-        logs('"Играем" отведенное время')
+    # Запускаем steam и игру
+    # Пока не сделали нормальный асинхронный запуск, попробуем без with
+    sp.Popen(['sudo', '-u', user, '/usr/bin/steam', '-no-browser', 'steam://rungameid/322330'],
+                  stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+    # Непонятное поведение, после logs('Ожидание загрузки игры вышло') скрипт ничего не делает. асинхронность? баг?ы
+    time.sleep(120)  # Ожидаем загрузку по таймеру
+    logs('Ожидание загрузки игры вышло')
+    # Закрываем предупреждение, появляющееся, если используем регистронезависимые файловые системы
+    close_warning()
+    dontstarve_windows = ewmh_wrapper("Don't Starve Together", strong=True)
+    dontstarve_window = find_window_of_user(current_game_windows, dontstarve_windows, concurrent_users_count)
+    logs('Начинаем вводить команды')
+    dontstarve_control(dontstarve_window)
+    ewmh = EWMH()
+    ewmh.setWmState(dontstarve_window, 1, '_NET_WM_STATE_SHADED')
+    ewmh.display.flush()
+    logs('"Играем" отведенное время')
 
 
 def stop_steam_game():
@@ -117,12 +118,21 @@ def ewmh_wrapper(substrings, strong=True, case_insensitive=False):
 
 def activate_dontstarve_window(window):
     ewmh = EWMH()
-    ewmh.setActiveWindow(window)
-    ewmh.display.flush()
-    time.sleep(0.1) # TODO провести тесты, нужна ли задержка и достаточна ли она для фокуса на нужном окне
+    i = 0  # Введём иттератор, чтоб не уйти в бесконечный цикл
+    threshold = 100
+    while i < threshold:
+        active_window = ewmh.getActiveWindow()
+        if active_window is not None:
+            if active_window.id == window.id:
+                return
+        ewmh.setActiveWindow(window)
+        ewmh.display.flush()
+        i += 1
+    if i == threshold:
+        logs('activate_dontstarve_window не смогла перевести фокус на требуемое окно')
 
 
-def in_window_key_press(starve_window, cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.2):
+def in_window_key_press(starve_window, cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.5):
     activate_dontstarve_window(starve_window)
     pag.press(cmd)
     logs('Pressed ', cmd)
@@ -154,12 +164,15 @@ def main():
         concurrent_users_count == concurrent_users_count if concurrent_users_count > 0 else len(users)
         i = 0
         while i < len(users):
-            current_game_windows = [None] * concurrent_users_count
+            logs('Начало обхода, i=', i, ' concurrent_users_count =', concurrent_users_count)
+            current_game_windows = []
             for concurrent in range(i, i + concurrent_users_count):
-                if i < len(users):
-                    run(i, concurrent_users_count, current_game_windows)
-            i += concurrent_users_count
-            for i in range(config.game_time_minutes):
+                if concurrent < len(users):
+                    # Необходима асинхронщина, иначе функция run ждёт завершения программы,
+                    # открытой sp.Popen(), в прошлой версии закрытие программы происходило в функции,
+                    # поэтому проблем не возникало.
+                    run(concurrent, concurrent_users_count, current_game_windows)
+            for j in range(config.game_time_minutes):
                 # TODO Каждую минуту проверять запущена ли игра
                 if True:
                     time.sleep(60)
@@ -167,11 +180,14 @@ def main():
                     break
             stop_steam_game()
             logs('finish run')
+            i += concurrent_users_count
+            logs('Конец обхода, i=', i, ' concurrent_users_count =', concurrent_users_count)
         if not config.loop:
             break
         end_time = datetime.datetime.now()
         diff_time_in_seconds = (start_next - end_time) // datetime.timedelta(seconds=1)
         if diff_time_in_seconds >= 0:
+            logs('Ждем ', diff_time_in_seconds, ' секунд')
             time.sleep(diff_time_in_seconds)
 
 

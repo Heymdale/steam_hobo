@@ -1,8 +1,13 @@
 import subprocess as sp
 import time
 
-with sp.Popen(['ping', '-c', '10', '8.8.8.8']) as proc2:
-    print('something')
-    time.sleep(60)
-    sp.call(['killall', 'ping'])
+def subproc_func():
+    with sp.Popen(['ping', '-c', '10', '8.8.8.8']):
+        print('something')
+        sp.call(['killall', 'ping'])
+        time.sleep(60)
+
+
+
+subproc_func()
 print('something2')
