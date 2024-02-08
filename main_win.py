@@ -1,11 +1,11 @@
 """ В файле sudoers должно быть прописано ALL=NOPASSWD: ALL для главного пользователя, от которого запускаем скрипт"""
 import datetime
 import time
-import subprocess as sp
 import config
 import pyautogui as pag
 
 import login_steam_desktop.login_steam as ls
+from games_launchers.launcher import LaunchGame
 
 
 def logs(*args, to_warn=False):
@@ -23,144 +23,44 @@ def logs(*args, to_warn=False):
         f.writelines(message)
 
 
-def find_window_of_user(current_game_windows, dontstarve_windows, concurrent_users_count):
-    for el in dontstarve_windows:
-        # window из класса ewmh нельзя сравнивать напрямую, пришлось сравнивать id
-        if el.id not in [x.id for x in current_game_windows]:
-            dontstarve_window = el
-            current_game_windows.append(el)
-            return dontstarve_window
-
-
-def run(user_index, concurrent_users_count, current_game_windows):
+def run_steam(user_index, steam_location):
     user = config.Users.windows_users_list[user_index]
     print('Start ', user['login'])
-    # Запускаем steam и игру
-    steam_foo = ls.LoginUserToSteam(user)
+    steam_foo = ls.LoginUserToSteam(user, steam_location)
     steam_foo.login_steam()
-
-    # Пока не сделали нормальный асинхронный запуск, попробуем без with
-
-    time.sleep(120)  # Ожидаем загрузку по таймеру
-    logs('Ожидание загрузки игры вышло')
-    # dontstarve_windows = ewmh_wrapper("Don't Starve Together", strong=True)
-    # dontstarve_window = find_window_of_user(current_game_windows, dontstarve_windows, concurrent_users_count)
-    # logs('Начинаем вводить команды')
-    # # dontstarve_control(dontstarve_window)
-    # ewmh = EWMH()
-    # ewmh.setWmState(dontstarve_window, 1, '_NET_WM_STATE_SHADED')
-    # ewmh.display.flush()
-    # logs('"Играем" отведенное время')
-
-
-# def stop_steam_game():
-#     sp.call(['taskkill', '-IM', 'steam.exe', '/F'])
-#     sp.call(['taskkill', '-IM', 'steamwebhelper.exe', '/F'])
-
-
-# def ewmh_wrapper(substrings, strong=True, case_insensitive=False):
-#     # С добавлением поиска строки целиком, враппер стал уже некрасив.
-#     # Оказалось, что приписка от какого пользователя запущена игра, не часть заголовка окна,
-#     # большая часть кода в данной функции написана зря.
-#     # TODO нужен рефакторинг, функция будет просто возвращать список окон.
-#     # Перед значительной переработкой сделаю коммит вместе с багом
-#     ewmh = EWMH()
-#     windows = ewmh.getClientList()
-#     find_windows = []
-#     if strong:
-#         if not isinstance(substrings, str):
-#             print('Error: You seek more than one string with strong mode')
-#             return
-#         if case_insensitive:
-#             find_name = substrings.lower()
-#         else:
-#             find_name = substrings
-#         for el in windows:
-#             w_name_binary = ewmh.getWmName(el)
-#             if w_name_binary is not None:
-#                 if case_insensitive:
-#                     w_name = w_name_binary.decode('utf-8').lower()
-#                 else:
-#                     w_name = w_name_binary.decode('utf-8')
-#                 if w_name == find_name:
-#                     find_windows.append(el)
-#     else:
-#         find_windows = windows
-#         for substr in substrings:
-#             windows = find_windows
-#             find_windows = []
-#             if case_insensitive:
-#                 substr = substr.lower()
-#             for el in windows:
-#                 w_name_binary = ewmh.getWmName(el)
-#                 if w_name_binary is not None:
-#                     if case_insensitive:
-#                         w_name = w_name_binary.decode('utf-8').lower()
-#                     else:
-#                         w_name = w_name_binary.decode('utf-8')
-#                     if -1 != w_name.find(substr):
-#                         find_windows.append(el)
-#     return find_windows
-
-
-# def activate_dontstarve_window(window):
-#     ewmh = EWMH()
-#     i = 0  # Введём иттератор, чтоб не уйти в бесконечный цикл
-#     threshold = 100
-#     while i < threshold:
-#         active_window = ewmh.getActiveWindow()
-#         if active_window is not None:
-#             if active_window.id == window.id:
-#                 return
-#         ewmh.setActiveWindow(window)
-#         ewmh.display.flush()
-#         i += 1
-#     if i == threshold:
-#         logs('activate_dontstarve_window не смогла перевести фокус на требуемое окно')
-
-
-# def in_window_key_press(starve_window, cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.5):
-#     activate_dontstarve_window(starve_window)
-#     pag.press(cmd)
-#     logs('Pressed ', cmd)
-#     time.sleep(pause_in_sec)
-
-
-# def dontstarve_control(starve_window):
-#     for i in range(10):
-#         in_window_key_press(starve_window, 'enter', 1)
-#     in_window_key_press(starve_window, 'left')
-#     in_window_key_press(starve_window, 'down')
-#     in_window_key_press(starve_window, 'enter')
-#     in_window_key_press(starve_window, 'down')
-#     in_window_key_press(starve_window, 'enter')
-#     for i in range(10):
-#         in_window_key_press(starve_window, 'down')
-#     in_window_key_press(starve_window, 'enter')
 
 
 def main_os():
     pag.FAILSAFE = False
     users = config.Users.windows_users_list
-    # stop_steam_game()
+    steam_location = config.steamexe_location
     while True:
         start_time = datetime.datetime.now()
         start_next = start_time + datetime.timedelta(minutes=config.looptime_minutes)
         i = 0
         while i < len(users):
+            user = users[i]
             logs('Начало обхода, i=', i)
-            current_game_windows = []
-            run(i, 1, current_game_windows)
-            for j in range(config.game_playtime_minutes):
-                # TODO Каждую минуту проверять запущена ли игра
-                if True:
-                    time.sleep(60)
-                else:
-                    break
-            # stop_steam_game()
+            run_steam(i, steam_location)
+            games_config = config.games_config
+            if 'games_config' in user.keys:
+                games_config = user['games_config']
+            for game_id in games_config.keys:
+                playtime = games_config[game_id]
+                game = LaunchGame.choose_game_launcher(steam_location, game_id)
+                game.run()
+                game.in_game_activity()
+                for j in range(ga):
+                    # TODO Каждую минуту проверять запущена ли игра
+                    if True:
+                        time.sleep(60)
+                    else:
+                        break
+                game.stop()
+
             logs('finish run')
-            i += concurrent_users_count
-            logs('Конец обхода, i=', i, ' concurrent_users_count =', concurrent_users_count)
+            i += 1
+            logs('Конец обхода, i=', i,)
         if not config.loop:
             break
         end_time = datetime.datetime.now()

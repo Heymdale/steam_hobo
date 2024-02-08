@@ -27,6 +27,7 @@ def get_hwnds_by_pid(pid: int) -> list[int]:
 
     return hwnds
 
+
 def get_window_rect_from_name(hwnd: int) -> tuple:
     # hwnd = ctypes.windll.user32.FindWindowW(0, name)
     rect = ctypes.wintypes.RECT()
@@ -34,10 +35,8 @@ def get_window_rect_from_name(hwnd: int) -> tuple:
     return rect.left, rect.top, rect.right, rect.bottom
 
 
-
 def test():
     print(get_hwnds_by_pid(15340))
-
 
 
 if __name__ == '__main__':

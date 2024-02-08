@@ -37,7 +37,7 @@ def run(user_index, concurrent_users_count, current_game_windows):
     # Запускаем steam и игру
     # Пока не сделали нормальный асинхронный запуск, попробуем без with
     sp.Popen(['sudo', '-u', user, '/usr/bin/steam', '-no-browser', 'steam://rungameid/322330'],
-                  stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+             stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
     # Непонятное поведение, после logs('Ожидание загрузки игры вышло') скрипт ничего не делает. асинхронность? баг?ы
     time.sleep(120)  # Ожидаем загрузку по таймеру
     logs('Ожидание загрузки игры вышло')
