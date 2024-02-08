@@ -6,7 +6,6 @@ def main():
     match os:
         case "Windows":
             from main_win import main_os
-            main()
         case "Linux":
             from main_lin import main_os
         case _:
