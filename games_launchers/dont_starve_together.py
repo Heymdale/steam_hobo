@@ -12,13 +12,14 @@ class DontStarveTogether(GameLauncher):
     @staticmethod
     def in_window_key_press(cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.5):
         pag.press(cmd)
+        print(f'Pressed key {cmd}')
         time.sleep(pause_in_sec)
 
     def in_game_activity(self):
         # Wait until game start
-        time.sleep(60*3)
+        time.sleep(60*2)
         for i in range(10):
-            self.in_window_key_press('enter', 1)
+            self.in_window_key_press('esc', 1)
         self.in_window_key_press('left')
         self.in_window_key_press('down')
         self.in_window_key_press('enter')

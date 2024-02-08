@@ -16,10 +16,12 @@ def logs(*args, to_warn=False):
         print(message)
     if to_warn:
         # TODO: Stab, in a future version it should send the message via e-mail or telegram bot
-        # Заглушка, в следующих версиях должна отправлять сообщения по почте или через телеграм бота.
+        # Заглушка, в следующих версиях должна отправлять сообще
+        # ния по почте или через телеграм бота.
+        #
         # Следует определиться на каком языке писать комментарии.
         print('\033[91m', message, '\033[0m')
-    with open('./log', 'a') as f:
+    with open('./log', 'a', encoding="utf-8") as f:
         f.writelines(message)
 
 
@@ -28,6 +30,7 @@ def run_steam(user_index, steam_location):
     print('Start ', user['login'])
     steam_foo = ls.LoginUserToSteam(user, steam_location)
     steam_foo.login_steam()
+    #time.sleep(120)
 
 
 def main_os():
@@ -43,14 +46,15 @@ def main_os():
             logs('Начало обхода, i=', i)
             run_steam(i, steam_location)
             games_config = config.games_config
-            if 'games_config' in user.keys:
+            print(user)
+            if 'games_config' in user.keys():
                 games_config = user['games_config']
-            for game_id in games_config.keys:
-                playtime = games_config[game_id]
+            for game_id in games_config.keys():
+                playtime = int(games_config[game_id])
                 game = LaunchGame.choose_game_launcher(steam_location, game_id)
                 game.run()
                 game.in_game_activity()
-                for j in range(ga):
+                for j in range(playtime):
                     # TODO Каждую минуту проверять запущена ли игра
                     if True:
                         time.sleep(60)
