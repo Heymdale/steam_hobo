@@ -1,2 +1,6 @@
-/log
-/test_*
+./.idea
+./venv
+./log
+./test_*
+./config.py
+./checking
