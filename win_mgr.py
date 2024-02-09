@@ -42,8 +42,7 @@ class WinMgr:
     def restore_window(self):
         ...
 
-    def get_window_rect_from_name(self) -> tuple:
-        # hwnd = ctypes.windll.user32.FindWindowW(0, name)
+    def get_window_rect_from_hwnd(self) -> tuple:
         rect = ctypes.wintypes.RECT()
         ctypes.windll.user32.GetWindowRect(self.hwnd, ctypes.pointer(rect))
         return rect.left, rect.top, rect.right, rect.bottom

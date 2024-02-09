@@ -43,7 +43,7 @@ class LoginUserToSteam:
         hwnd_steam = WinMgr.get_hwnd_by_name('Sign in to Steam')
         steam_window = WinMgr(hwnd_steam)
         print(f'{hwnd_steam=}')
-        r_left, r_top, r_right, r_bottom = steam_window.get_window_rect_from_name()
+        r_left, r_top, r_right, r_bottom = steam_window.get_window_rect_from_hwnd()
         r_height = r_bottom - r_top
         r_width = r_right - r_left
         print(f'{r_left=}, {r_top=}, {r_right=}, {r_bottom=}, {r_height=}, {r_width=}')
