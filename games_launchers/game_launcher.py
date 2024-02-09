@@ -5,7 +5,7 @@ import subprocess as sp
 
 class GameLauncher(ABC):
 
-    __process_names = None
+    _process_names = None
 
     def __init__(self, steam_location, steam_game_id):
         # Replace directory separators as "//", "\\", "\" to "/".
@@ -39,8 +39,8 @@ class GameLauncher(ABC):
         #time.sleep(120)
 
     def stop(self):
-        if self.__process_names is not None:
-            for proc_name in self.__process_names:
+        if self._process_names is not None:
+            for proc_name in self._process_names:
                 sp.call(['taskkill', '-IM', proc_name, '/F'])
             return
         self._stop_if_none()

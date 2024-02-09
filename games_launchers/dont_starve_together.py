@@ -7,7 +7,7 @@ from games_launchers.game_launcher import GameLauncher
 
 class DontStarveTogether(GameLauncher):
 
-    __process_names = ('dontstarve_steam.exe', 'dontstarve_steam_x64.exe')
+    _process_names = ('dontstarve_steam.exe', 'dontstarve_steam_x64.exe')
 
     @staticmethod
     def in_window_key_press(cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.5):
@@ -19,7 +19,7 @@ class DontStarveTogether(GameLauncher):
         # Wait until game start
         time.sleep(60*2)
         for i in range(10):
-            self.in_window_key_press('esc', 1)
+            self.in_window_key_press('enter', 1)
         self.in_window_key_press('left')
         self.in_window_key_press('down')
         self.in_window_key_press('enter')
