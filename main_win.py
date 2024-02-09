@@ -30,7 +30,6 @@ def run_steam(user_index, steam_location):
     print('Start ', user['login'])
     steam_foo = ls.LoginUserToSteam(user, steam_location)
     steam_foo.login_steam()
-    #time.sleep(120)
 
 
 def main_os():

@@ -4,7 +4,7 @@ import pyautogui as pag
 import subprocess as sp
 from steam_totp import generate_twofactor_code_for_time
 
-import win_mgr
+from win_mgr import WinMgr
 
 
 class LoginUserToSteam:
@@ -40,9 +40,10 @@ class LoginUserToSteam:
         self.__start_steam()
         # TODO: Add cycle with check if app has been appeared and exception if not in 5 minutes
         time.sleep(20)
-        hwnd_steam = win_mgr.get_hwnd_by_name('Sign in to Steam')
+        hwnd_steam = WinMgr.get_hwnd_by_name('Sign in to Steam')
+        steam_window = WinMgr(hwnd_steam)
         print(f'{hwnd_steam=}')
-        r_left, r_top, r_right, r_bottom = win_mgr.get_window_rect_from_name(hwnd_steam)
+        r_left, r_top, r_right, r_bottom = steam_window.get_window_rect_from_name()
         r_height = r_bottom - r_top
         r_width = r_right - r_left
         print(f'{r_left=}, {r_top=}, {r_right=}, {r_bottom=}, {r_height=}, {r_width=}')
