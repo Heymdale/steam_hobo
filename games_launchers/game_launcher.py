@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 import subprocess as sp
 
@@ -35,11 +36,13 @@ class GameLauncher(ABC):
         # and it must start without "sign in" window
         sp.Popen([self.steam_location, '-silent'],
                  stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+        time.sleep(60)
 
     def stop(self):
         if self._process_names is not None:
             for proc_name in self._process_names:
                 sp.call(['taskkill', '-IM', proc_name, '/F'])
+                time.sleep(60)
             return
         self._stop_if_none()
 

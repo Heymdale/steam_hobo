@@ -64,6 +64,7 @@ def main_os():
             logs('finish run')
             i += 1
             logs('Конец обхода, i=', i,)
+            time.sleep(60)
         if not config.loop:
             break
         end_time = datetime.datetime.now()
