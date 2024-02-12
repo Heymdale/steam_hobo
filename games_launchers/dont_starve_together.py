@@ -18,16 +18,17 @@ class DontStarveTogether(GameLauncher):
         # We must restore window if it minimized.
         # We must foreground window if it in background.
         # We will not check, we will do.
-        # If cursor point on dst menu, up/down commands will list choosen item from the point,
+        # If cursor point on dst menu, up/down commands will list chosen item from the point,
         # so we must move cursor out for example to 0,0.
+        pag.moveTo(0, 0)
         self.__window.restore_window()
         self.__window.window_to_foreground()
-        pag.moveTo(0, 0)
         pag.press(cmd)
         print(f'Pressed key {cmd}')
         time.sleep(pause_in_sec)
 
     def in_game_activity(self):
+        self._start_if_steam_cloud_problem()
         # Wait until game start
         time.sleep(60*2)
         dst_hwnd = WinMgr.get_hwnd_by_name(self.__window_title)

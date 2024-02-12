@@ -49,6 +49,10 @@ class WinMgr:
         sw_restore = 9
         ctypes.windll.user32.ShowWindow(self.hwnd, sw_restore)
 
+    # Not working implementation
+    def destroy_window(self):
+        ctypes.windll.user32.DestroyWindow(self.hwnd)
+
     def get_window_rect_from_hwnd(self) -> tuple:
         rect = ctypes.wintypes.RECT()
         ctypes.windll.user32.GetWindowRect(self.hwnd, ctypes.pointer(rect))

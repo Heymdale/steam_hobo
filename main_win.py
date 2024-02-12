@@ -1,4 +1,3 @@
-""" В файле sudoers должно быть прописано ALL=NOPASSWD: ALL для главного пользователя, от которого запускаем скрипт"""
 import datetime
 import time
 import config
@@ -16,10 +15,6 @@ def logs(*args, to_warn=False):
         print(message)
     if to_warn:
         # TODO: Stab, in a future version it should send the message via e-mail or telegram bot
-        # Заглушка, в следующих версиях должна отправлять сообще
-        # ния по почте или через телеграм бота.
-        #
-        # Следует определиться на каком языке писать комментарии.
         print('\033[91m', message, '\033[0m')
     with open('./log', 'a', encoding="utf-8") as f:
         f.writelines(message)

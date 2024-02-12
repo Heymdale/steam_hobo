@@ -2,6 +2,8 @@ import time
 from abc import ABC, abstractmethod
 import subprocess as sp
 
+import pyautogui as pag
+
 
 class GameLauncher(ABC):
 
@@ -26,6 +28,18 @@ class GameLauncher(ABC):
     @abstractmethod
     def in_game_activity(self):
         ...
+
+    @staticmethod
+    def _start_if_steam_cloud_problem():
+        """
+        As example, DST program shutout without saving, this call problem with cloud saves on next start.
+        As a stab I will call 'enter' press to start anyway.
+        It will 3 times with interval to wait until window about problem appear
+        and to minimize risk of other window sets to foreground.
+        """
+        for i in range(3):
+            time.sleep(1)
+            pag.press('enter')
 
     def _stop_if_none(self):
         # We can't know which process is a game,
