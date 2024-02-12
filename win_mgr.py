@@ -34,13 +34,20 @@ class WinMgr:
         self.hwnd = hwnd
 
     def window_to_foreground(self):
-        ...
+        ctypes.windll.user32.SetForegroundWindow(self.hwnd)
+        ctypes.windll.user32.BringWindowToTop(self.hwnd)
 
     def minimize_window(self):
-        ...
+        sw_minimize = 6
+        ctypes.windll.user32.ShowWindow(self.hwnd, sw_minimize)
+
+    def maximize_window(self):
+        sw_maximize = 3
+        ctypes.windll.user32.ShowWindow(self.hwnd, sw_maximize)
 
     def restore_window(self):
-        ...
+        sw_restore = 9
+        ctypes.windll.user32.ShowWindow(self.hwnd, sw_restore)
 
     def get_window_rect_from_hwnd(self) -> tuple:
         rect = ctypes.wintypes.RECT()
