@@ -6,7 +6,6 @@ import pyautogui as pag
 
 
 class GameLauncher(ABC):
-
     _process_names = None
 
     def __init__(self, steam_location, steam_game_id):
@@ -50,6 +49,9 @@ class GameLauncher(ABC):
         # and it must start without "sign in" window
         sp.Popen([self.steam_location, '-silent'],
                  stdin=sp.DEVNULL, stdout=sp.DEVNULL, stderr=sp.DEVNULL)
+        # But not. login to steam need get user object. Better to create launcher for the game.
+        # TODO: fix it.
+
         time.sleep(60)
 
     def stop(self):
