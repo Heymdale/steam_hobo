@@ -29,8 +29,11 @@ class DontStarveTogether(GameLauncher):
 
     def in_game_activity(self):
         self._start_if_steam_cloud_problem()
+        # To not point on DST window item move cursor to 0,0
+        pag.moveTo(0, 0)
         # Wait until game start
         time.sleep(60*2)
+        pag.moveTo(0, 0)
         dst_hwnd = WinMgr.get_hwnd_by_name(self.__window_title)
         self.__window = WinMgr(dst_hwnd)
         for i in range(10):
