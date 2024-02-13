@@ -46,7 +46,7 @@ class LoginUserToSteam:
         time.sleep(5)
         self.__start_steam()
         # TODO: Add cycle with check if app has been appeared and exception if not in 5 minutes
-        time.sleep(20)
+        time.sleep(40)
         hwnd_steam = WinMgr.get_hwnd_by_name('Sign in to Steam')
         self.steam_window_manager = WinMgr(hwnd_steam)
         print(f'{hwnd_steam=}')
