@@ -52,13 +52,20 @@ class GameLauncher(ABC):
         # But not. login to steam need get user object. Better to create launcher for the game.
         # TODO: fix it.
 
-        time.sleep(60)
+        time.sleep(30)
+
+    def _stop(self, process_name):
+        sp.call(['taskkill', '-IM', process_name, '/F'])
 
     def stop(self):
         if self._process_names is not None:
+            if isinstance(self._process_names, str):
+                self._stop(self._process_names)
+                time.sleep(30)
+                return
             for proc_name in self._process_names:
-                sp.call(['taskkill', '-IM', proc_name, '/F'])
-                time.sleep(60)
+                self._stop(proc_name)
+            time.sleep(30)
             return
         self._stop_if_none()
 
