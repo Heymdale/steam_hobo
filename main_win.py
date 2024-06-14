@@ -40,7 +40,6 @@ def main_os():
             logs('Начало обхода, i=', i)
             run_steam(i, steam_location)
             games_config = config.games_config
-            print(user)
             if 'games_config' in user.keys():
                 games_config = user['games_config']
             for game_id in games_config.keys():
