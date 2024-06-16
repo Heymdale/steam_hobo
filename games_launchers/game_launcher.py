@@ -4,9 +4,12 @@ import subprocess as sp
 
 import pyautogui as pag
 
+from win_mgr import WinMgr
+
 
 class GameLauncher(ABC):
     _process_names = None
+    _window_title = None
 
     def __init__(self, steam_location, steam_game_id):
         # Replace directory separators as "//", "\\", "\" to "/".
@@ -54,7 +57,15 @@ class GameLauncher(ABC):
 
         time.sleep(30)
 
-    def _stop(self, process_name):
+    def wait_hwnd(self, repeat=30, secs_between_repeat=10):
+        for _ in range(repeat):
+            game_hwnd = WinMgr.get_hwnd_by_name(self._window_title)
+            if game_hwnd:
+                return game_hwnd
+            time.sleep(secs_between_repeat)
+
+    @staticmethod
+    def _stop(process_name):
         sp.call(['taskkill', '-IM', process_name, '/F'])
 
     def stop(self):

@@ -4,3 +4,4 @@
 ./test_*
 ./config.py
 ./checking
+config_orig.py

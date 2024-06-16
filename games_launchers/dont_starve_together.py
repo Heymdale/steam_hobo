@@ -9,7 +9,7 @@ from win_mgr import WinMgr
 class DontStarveTogether(GameLauncher):
 
     _process_names = ('dontstarve_steam.exe', 'dontstarve_steam_x64.exe')
-    __window_title = 'Don\'t Starve Together'
+    _window_title = 'Don\'t Starve Together'
     __window = None
 
     def in_window_key_press(self, cmd: "str pyautogui KEYBOARD_KEYS", pause_in_sec=0.5):
@@ -32,9 +32,12 @@ class DontStarveTogether(GameLauncher):
         # To not point on DST window item move cursor to 0,0
         pag.moveTo(0, 0)
         # Wait until game start
-        time.sleep(60*2)
+        dst_hwnd = self.wait_hwnd(repeat=60)
+        if not dst_hwnd:
+            return
+        # Wait until game loads
+        time.sleep(60*1)
         pag.moveTo(0, 0)
-        dst_hwnd = WinMgr.get_hwnd_by_name(self.__window_title)
         self.__window = WinMgr(dst_hwnd)
         for i in range(10):
             self.in_window_key_press('enter', 1)
