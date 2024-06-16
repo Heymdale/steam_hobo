@@ -3,3 +3,4 @@ ewmh
 steam-totp
 psutil
 pywin32
+pynput
