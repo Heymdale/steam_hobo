@@ -1,5 +1,6 @@
 # steam_hobo
 Now it works on windows, but maybe break on linux.
+!!!WARNING!!! The games Bananas and Cats use autoclicking on their windows. To regain control, press the enter or escape button (again to enable autoclicking).
 
 Works on Linux with sudo command
 The script just run the steam version of Don't Starve together and switches to the next user on the list every 3 hours.
