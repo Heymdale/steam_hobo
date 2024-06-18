@@ -27,6 +27,7 @@ class Banana(GameLauncher):
         if self._window is None:
             pynput.keyboard.Listener.stop(listener)
             return
+        # For pyautogui there is no point in setting a value less than 0.005
         pag.PAUSE = clicks_interval_in_secs
         for _ in range(min_click_count + randint(0, plus_random_click_count)):
             if not self._is_to_click:

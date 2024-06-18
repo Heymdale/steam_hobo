@@ -3,6 +3,7 @@ from games_launchers.dont_starve_together import DontStarveTogether
 from games_launchers.team_fortress_2 import TeamFortress2
 from games_launchers.banana import Banana
 from games_launchers.cats import Cats
+from games_launchers.egg import Egg
 
 
 class LaunchGame:
@@ -13,6 +14,7 @@ class LaunchGame:
             440: TeamFortress2,
             2923300: Banana,
             2977660: Cats,
+            2784840: Egg,
         }
 
         if game_id in exists_game_id.keys():
