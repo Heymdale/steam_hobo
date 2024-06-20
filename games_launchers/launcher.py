@@ -4,6 +4,7 @@ from games_launchers.team_fortress_2 import TeamFortress2
 from games_launchers.banana import Banana
 from games_launchers.cats import Cats
 from games_launchers.egg import Egg
+from games_launchers.Cucumber import Cucumber
 
 
 class LaunchGame:
@@ -15,6 +16,7 @@ class LaunchGame:
             2923300: Banana,
             2977660: Cats,
             2784840: Egg,
+            3015610: Cucumber,
         }
 
         if game_id in exists_game_id.keys():
