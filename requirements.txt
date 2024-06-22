@@ -4,3 +4,6 @@ steam-totp
 psutil
 pywin32
 pynput
+
+pywinauto
+mouse
