@@ -10,7 +10,7 @@ class Cucumber(Banana):
 
     def in_game_activity(self,
                          clicks_interval_in_secs=0.0666,
-                         min_click_count=2000,
+                         min_click_count=5000,
                          plus_random_click_count=700,
                          ):
         super().in_game_activity(
