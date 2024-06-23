@@ -71,8 +71,8 @@ class Banana(GameLauncher):
                          args=(center_point,),
                          kwargs={'listener': listener,
                                  'clicks_interval_in_secs': clicks_interval_in_secs,
-                                 'min_click_count': clicks_interval_in_secs,
-                                 'plus_random_click_count': clicks_interval_in_secs},
+                                 'min_click_count': min_click_count,
+                                 'plus_random_click_count': plus_random_click_count},
                          daemon=False).start()
         # With join() main algorithm will wait until listener thread are exit, else it will run further.
         listener.join()
