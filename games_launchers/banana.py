@@ -50,7 +50,11 @@ class Banana(GameLauncher):
         else:
             print('Not rule key')
 
-    def in_game_activity(self):
+    def in_game_activity(self,
+                         clicks_interval_in_secs=0.0666,
+                         min_click_count=500,
+                         plus_random_click_count=700,
+                         ):
         # Wait until game start
         game_hwnd = self.wait_hwnd()
         if not game_hwnd:
@@ -66,9 +70,9 @@ class Banana(GameLauncher):
                          # Ugly pass a tuple
                          args=(center_point,),
                          kwargs={'listener': listener,
-                                 'clicks_interval_in_secs': 0.0666,
-                                 'min_click_count': 500,
-                                 'plus_random_click_count': 700},
+                                 'clicks_interval_in_secs': clicks_interval_in_secs,
+                                 'min_click_count': clicks_interval_in_secs,
+                                 'plus_random_click_count': clicks_interval_in_secs},
                          daemon=False).start()
         # With join() main algorithm will wait until listener thread are exit, else it will run further.
         listener.join()
