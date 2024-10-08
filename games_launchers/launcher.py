@@ -6,6 +6,7 @@ from games_launchers.cats import Cats
 from games_launchers.egg import Egg
 from games_launchers.cucumber import Cucumber
 from games_launchers.egg_surprise import EggSurprise
+from games_launchers.butt_slapper import ButtSlapper
 
 
 class LaunchGame:
@@ -19,6 +20,7 @@ class LaunchGame:
             2784840: Egg,
             3015610: Cucumber,
             3017120: EggSurprise,
+            3231090: ButtSlapper,
         }
 
         if game_id in exists_game_id.keys():
