@@ -17,18 +17,38 @@ class Banana(GameLauncher):
     _window = None
     _is_to_click = True
 
+    @staticmethod
+    def click():
+        mouse = pynput.mouse.Controller()
+        mouse.press(pynput.mouse.Button.left)
+        time.sleep(0.03)
+        mouse.release(pynput.mouse.Button.left)
+
+    def set_window(self):
+        # Wait until game start
+        game_hwnd = self.wait_hwnd()
+        if not game_hwnd:
+            return None
+        self._window = WinMgr(game_hwnd)
+        print(f'{game_hwnd=}')
+
+    def get_click_point(self) -> None | Tuple[float, int]:
+        r_left, r_top, r_right, r_bottom = self._window.get_window_rect_from_hwnd()
+        x, y = (r_left + r_right) / 2, (r_top + r_bottom) / 2
+        return x + randint(0, 15), y + randint(0, 15)
+
     # Real parameters will pass in threading.Thread
-    def in_window_click_center(self, point: Tuple[Union[float, int]],
-                               listener: Optional[pynput.keyboard.Listener] = None,
-                               clicks_interval_in_secs: Union[float, int] = 0.1,
-                               min_click_count: int = 100,
-                               plus_random_click_count: int = 0
-                               ):
+    def in_window_click(self,
+                        listener: Optional[pynput.keyboard.Listener] = None,
+                        clicks_interval_in_secs: Union[float, int] = 0.1,
+                        min_click_count: int = 100,
+                        plus_random_click_count: int = 0
+                        ):
+
+        self.set_window()
         if self._window is None:
             pynput.keyboard.Listener.stop(listener)
             return
-        # For pyautogui there is no point in setting a value less than 0.005
-        pag.PAUSE = clicks_interval_in_secs
         for _ in range(min_click_count + randint(0, plus_random_click_count)):
             if not self._is_to_click:
                 time.sleep(clicks_interval_in_secs)
@@ -38,9 +58,9 @@ class Banana(GameLauncher):
             # We will not check, we will do.
             self._window.restore_window()
             self._window.window_to_foreground()
-            pag.moveTo(int(point[0]) + randint(0, 30),
-                       int(point[1]) + randint(0, 30))
-            pag.click()
+            pag.moveTo(self.get_click_point())
+            self.click()
+            time.sleep(clicks_interval_in_secs)
         pynput.keyboard.Listener.stop(listener)
 
     def on_press(self, key):
@@ -55,20 +75,10 @@ class Banana(GameLauncher):
                          min_click_count=500,
                          plus_random_click_count=700,
                          ):
-        # Wait until game start
-        game_hwnd = self.wait_hwnd()
-        if not game_hwnd:
-            return
-        self._window = WinMgr(game_hwnd)
-        print(f'{game_hwnd=}')
-        r_left, r_top, r_right, r_bottom = self._window.get_window_rect_from_hwnd()
-        print(f'{r_left=}, {r_top=}, {r_right=}, {r_bottom=}')
-        center_point = (r_left + r_right)/2, (r_top + r_bottom)/2
+
         listener = pynput.keyboard.Listener(on_press=self.on_press)
         listener.start()
-        threading.Thread(target=self.in_window_click_center,
-                         # Ugly pass a tuple
-                         args=(center_point,),
+        threading.Thread(target=self.in_window_click,
                          kwargs={'listener': listener,
                                  'clicks_interval_in_secs': clicks_interval_in_secs,
                                  'min_click_count': min_click_count,
