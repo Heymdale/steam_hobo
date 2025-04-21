@@ -35,7 +35,7 @@ class Banana(GameLauncher):
     def get_click_point(self) -> None | Tuple[float, int]:
         r_left, r_top, r_right, r_bottom = self._window.get_window_rect_from_hwnd()
         x, y = (r_left + r_right) / 2, (r_top + r_bottom) / 2
-        return x + randint(0, 15), y + randint(0, 15)
+        return x + randint(15, 20), y + randint(0, 5)
 
     # Real parameters will pass in threading.Thread
     def in_window_click(self,
