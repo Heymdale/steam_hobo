@@ -16,6 +16,7 @@ def logs(*args, to_warn=False):
     if to_warn:
         # TODO: Stab, in a future version it should send the message via e-mail or telegram bot
         print('\033[91m', message, '\033[0m')
+    message += '\n'
     with open('./log', 'a', encoding="utf-8") as f:
         f.writelines(message)
 
@@ -37,12 +38,13 @@ def main_os():
         i = 0
         while i < len(users):
             user = users[i]
-            logs('Начало обхода, i=', i)
+            logs('Начало обхода, user =', user['login'])
             run_steam(i, steam_location)
             games_config = config.games_config
             if 'games_config' in user.keys():
                 games_config = user['games_config']
             for game_id in games_config.keys():
+                logs('Start game with id', game_id)
                 playtime = int(games_config[game_id])
                 game = LaunchGame.choose_game_launcher(steam_location, game_id)
                 game.run()
@@ -54,8 +56,9 @@ def main_os():
                     else:
                         break
                 game.stop()
+                logs('Stop game with id', game_id)
 
-            logs('finish run')
+            logs('finish run for that user')
             i += 1
             logs('Конец обхода, i=', i,)
             time.sleep(60)
