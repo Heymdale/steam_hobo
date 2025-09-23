@@ -38,7 +38,7 @@ def main_os():
         i = 0
         while i < len(users):
             user = users[i]
-            logs('Начало обхода, user =', user['login'])
+            logs('Начало обхода, user = ', user['login'])
             run_steam(i, steam_location)
             games_config = config.games_config
             if 'games_config' in user.keys():
@@ -60,7 +60,6 @@ def main_os():
 
             logs('finish run for that user')
             i += 1
-            logs('Конец обхода, i=', i,)
             time.sleep(60)
         if not config.loop:
             break
